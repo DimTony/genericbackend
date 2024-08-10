@@ -2,8 +2,6 @@ const Applicant = require('../models/fwawApplication');
 
 const registerApplicant = async (req, res, next) => {
   try {
-    console.log('Received request body:', JSON.stringify(req.body, null, 2));
-
     const {
       firstName,
       lastName,
@@ -30,32 +28,37 @@ const registerApplicant = async (req, res, next) => {
       receiptPhoto,
     } = req.body;
 
-    console.log('File URLs from req.body:');
-    console.log('introVideo:', introVideo);
-    console.log('fullBodyPhoto:', fullBodyPhoto);
-    console.log('headShotPhoto:', headShotPhoto);
-    console.log('receiptPhoto:', receiptPhoto);
+    let parsedDateOfBirth;
+    try {
+      if (typeof dateOfBirth === 'string') {
+        const dateObj = JSON.parse(dateOfBirth);
+        // Create date in UTC to avoid timezone issues
+        parsedDateOfBirth = new Date(
+          Date.UTC(dateObj.year, dateObj.month - 1, dateObj.day)
+        );
+      } else {
+        parsedDateOfBirth = new Date(
+          Date.UTC(
+            dateOfBirth.getFullYear(),
+            dateOfBirth.getMonth(),
+            dateOfBirth.getDate()
+          )
+        );
+      }
 
-    // Validate that all required files are present
-    if (!introVideo || !fullBodyPhoto || !headShotPhoto || !receiptPhoto) {
-      console.log('Missing required files. Sending 400 response.');
-      return res.status(400).json({
-        message:
-          'All required files (intro video, full body photo, headshot photo and receipt photo) must be uploaded.',
-        missingFiles: {
-          introVideo: !introVideo,
-          fullBodyPhoto: !fullBodyPhoto,
-          headShotPhoto: !headShotPhoto,
-          receiptPhoto: !receiptPhoto,
-        },
-      });
+      if (isNaN(parsedDateOfBirth.getTime())) {
+        throw new Error('Invalid date');
+      }
+    } catch (error) {
+      console.error('Error parsing dateOfBirth:', error);
+      return res.status(400).json({ message: 'Invalid date of birth format' });
     }
 
     const newApplication = new Applicant({
       firstName,
       lastName,
       emailAddress,
-      dateOfBirth: new Date(dateOfBirth),
+      dateOfBirth: parsedDateOfBirth,
       mobilePhone,
       socialHandles,
       currentCity,
@@ -77,23 +80,11 @@ const registerApplicant = async (req, res, next) => {
       consent: consent === 'true',
     });
 
-    console.log(
-      'New application object:',
-      JSON.stringify(newApplication, null, 2)
-    );
-
     const savedApplication = await newApplication.save();
-    console.log(
-      'Saved application:',
-      JSON.stringify(savedApplication, null, 2)
-    );
 
-    res
-      .status(201)
-      .json({
-        message: 'Application submitted successfully',
-        application: savedApplication,
-      });
+    res.status(201).json({
+      message: 'Application submitted successfully',
+    });
   } catch (error) {
     console.error('Error submitting application:', error);
     res.status(500).json({

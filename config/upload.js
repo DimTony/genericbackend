@@ -116,6 +116,15 @@ const handleUpload = async (req, res, next) => {
     }
     next();
   } catch (error) {
+    // If there's an error, make sure to delete any uploaded files
+    if (req.files) {
+      for (let fieldname in req.files) {
+        const file = req.files[fieldname][0];
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      }
+    }
     next(error);
   }
 };

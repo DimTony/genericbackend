@@ -22,41 +22,22 @@ const registerApplicant = async (req, res, next) => {
       howYouHeard,
       appliedBefore,
       consent,
+      introVideo,
+      fullBodyPhoto,
+      headShotPhoto,
+      receiptPhoto,
     } = req.body;
 
-    // Check if files were uploaded successfully
-    const introVideoUrl =
-      req.files['introVideo'] && req.files['introVideo'][0]
-        ? req.files['introVideo'][0].path
-        : null;
-    const fullBodyPhotoUrl =
-      req.files['fullBodyPhoto'] && req.files['fullBodyPhoto'][0]
-        ? req.files['fullBodyPhoto'][0].path
-        : null;
-    const headShotPhotoUrl =
-      req.files['headShotPhoto'] && req.files['headShotPhoto'][0]
-        ? req.files['headShotPhoto'][0].path
-        : null;
-    const receiptPhotoUrl =
-      req.files['receiptPhoto'] && req.files['receiptPhoto'][0]
-        ? req.files['receiptPhoto'][0].path
-        : null;
-
     // Validate that all required files are present
-    if (
-      !introVideoUrl ||
-      !fullBodyPhotoUrl ||
-      !headShotPhotoUrl ||
-      !receiptPhotoUrl
-    ) {
+    if (!introVideo || !fullBodyPhoto || !headShotPhoto || !receiptPhoto) {
       return res.status(400).json({
         message:
           'All required files (intro video, full body photo, headshot photo and receipt photo) must be uploaded.',
         missingFiles: {
-          introVideo: !introVideoUrl,
-          fullBodyPhoto: !fullBodyPhotoUrl,
-          headShotPhoto: !headShotPhotoUrl,
-          receiptPhoto: !receiptPhotoUrl,
+          introVideo: !introVideo,
+          fullBodyPhoto: !fullBodyPhoto,
+          headShotPhoto: !headShotPhoto,
+          receiptPhoto: !receiptPhoto,
         },
       });
     }
@@ -80,10 +61,10 @@ const registerApplicant = async (req, res, next) => {
       cityGirlOrCountryGirl,
       howYouHeard,
       appliedBefore,
-      introVideoUrl,
-      fullBodyPhotoUrl,
-      headShotPhotoUrl,
-      receiptPhotoUrl,
+      introVideo,
+      fullBodyPhoto,
+      headShotPhoto,
+      receiptPhoto,
       consent: consent === 'true',
     });
 

@@ -2,6 +2,8 @@ const Applicant = require('../models/fwawApplication');
 
 const registerApplicant = async (req, res, next) => {
   try {
+    console.log('Received request body:', JSON.stringify(req.body, null, 2));
+
     const {
       firstName,
       lastName,
@@ -28,8 +30,15 @@ const registerApplicant = async (req, res, next) => {
       receiptPhoto,
     } = req.body;
 
+    console.log('File URLs from req.body:');
+    console.log('introVideo:', introVideo);
+    console.log('fullBodyPhoto:', fullBodyPhoto);
+    console.log('headShotPhoto:', headShotPhoto);
+    console.log('receiptPhoto:', receiptPhoto);
+
     // Validate that all required files are present
     if (!introVideo || !fullBodyPhoto || !headShotPhoto || !receiptPhoto) {
+      console.log('Missing required files. Sending 400 response.');
       return res.status(400).json({
         message:
           'All required files (intro video, full body photo, headshot photo and receipt photo) must be uploaded.',
@@ -68,9 +77,23 @@ const registerApplicant = async (req, res, next) => {
       consent: consent === 'true',
     });
 
-    await newApplication.save();
+    console.log(
+      'New application object:',
+      JSON.stringify(newApplication, null, 2)
+    );
 
-    res.status(201).json({ message: 'Application submitted successfully' });
+    const savedApplication = await newApplication.save();
+    console.log(
+      'Saved application:',
+      JSON.stringify(savedApplication, null, 2)
+    );
+
+    res
+      .status(201)
+      .json({
+        message: 'Application submitted successfully',
+        application: savedApplication,
+      });
   } catch (error) {
     console.error('Error submitting application:', error);
     res.status(500).json({

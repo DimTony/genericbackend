@@ -30,6 +30,11 @@ app.use('/api/events', eventRoutes);
 app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/applicants', ApplicantRoutes);
 
+// Keep alive endpoint
+app.get('/keep-alive', (req, res) => {
+  res.status(200).send('Server is alive');
+});
+
 app.all('*', (req, res, next) => {
   const err = new CustomError(
     404,

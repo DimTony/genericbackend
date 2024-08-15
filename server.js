@@ -4,12 +4,13 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 const CustomError = require('./utils/customError');
+const applicantRoutes = require('./routes/applicant');
 const authRoutes = require('./routes/auth');
-const researchRoutes = require('./routes/research');
-const mailingListRoutes = require('./routes/mailingList');
 const eventRoutes = require('./routes/event');
+const ipRoutes = require('./routes/ip');
+const mailingListRoutes = require('./routes/mailingList');
+const researchRoutes = require('./routes/research');
 const volunteerRoutes = require('./routes/volunteer');
-const ApplicantRoutes = require('./routes/applicant');
 
 dotenv.config();
 
@@ -23,12 +24,13 @@ app.use(cors());
 connectDB();
 
 // Routes
+app.use('/api/applicants', applicantRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/researches', researchRoutes);
-app.use('/api/mailing', mailingListRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/ip', ipRoutes);
+app.use('/api/mailing', mailingListRoutes);
+app.use('/api/researches', researchRoutes);
 app.use('/api/volunteers', volunteerRoutes);
-app.use('/api/applicants', ApplicantRoutes);
 
 // Keep alive endpoint
 app.get('/keep-alive', (req, res) => {

@@ -1,5 +1,6 @@
 const CustomError = require("../utils/customError");
 const JarradWrigleyClient = require("../models/jarradWrigley");
+const jarradWrigleyConfirmation = require("../models/jarradWrigleyConfirmation");
 
 const saveClient = async (req, res, next) => {
   const {
@@ -48,4 +49,25 @@ const saveClient = async (req, res, next) => {
   }
 };
 
-module.exports = { saveClient };
+const saveConfirmation = async (req, res, next) => {
+  const { signedContract, firstReceipt } = req.body;
+  try {
+    if (!signedContract | !firstReceipt) {
+      throw new CustomError(400, "Please provide all required fields", 400);
+    }
+
+    const newConfirmation = new jarradWrigleyConfirmation(req.body);
+
+    await newConfirmation.save();
+
+    res.status(201);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      next(error);
+    } else {
+      next(new CustomError(500, "Server Error"));
+    }
+  }
+};
+
+module.exports = { saveClient, saveConfirmation };

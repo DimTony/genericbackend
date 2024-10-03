@@ -7,6 +7,7 @@ const saveClient = async (req, res, next) => {
     clientAddress,
     clientName,
     clientPhone,
+    clientEmail,
     clientType,
     date,
     endTime,
@@ -21,6 +22,7 @@ const saveClient = async (req, res, next) => {
       !clientAddress |
       !clientName |
       !clientPhone |
+      !clientEmail |
       !clientType |
       !date |
       !endTime |

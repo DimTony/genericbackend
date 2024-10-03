@@ -6,7 +6,7 @@ const JarradWrigleySchema = new mongoose.Schema(
     clientName: { type: String, required: true },
     clientAddress: { type: String, required: true },
     clientPhone: { type: String, required: true },
-    clientEmail: { type: String },
+    clientEmail: { type: String, required: true },
     venueName: { type: String, required: true },
     venueAddress: { type: String, required: true },
     eventDescription: { type: String, required: true },

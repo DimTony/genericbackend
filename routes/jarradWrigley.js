@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { jarradUpload, handleUpload } = require("../config/upload");
+// const { uploadFiles, handleUpload } = require("../config/jarradUpload");
 const {
   saveClient,
   saveConfirmation,
@@ -16,5 +17,6 @@ router.post(
   handleUpload,
   saveConfirmation
 );
+// router.post("/confirmation/save", uploadFiles, handleUpload, saveConfirmation);
 
 module.exports = router;

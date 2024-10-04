@@ -88,29 +88,55 @@ const upload = multer({
 
 const allowedFileTypes = {
   pdf: ["application/pdf"],
-  image: ["image/jpeg", "image/png", "image/gif"],
+  image: [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "image/webp",
+    "image/heic",
+  ],
+};
+
+const allowedExtensions = {
+  pdf: [".pdf"],
+  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".heic"],
 };
 
 // Define file size limits (in bytes)
 const fileSizeLimits = {
-  pdf: 5 * 1024 * 1024, // 5 MB
-  image: 2 * 1024 * 1024, // 2 MB
+  pdf: 500 * 1024 * 1024, // 500 MB
+  image: 200 * 1024 * 1024, // 200 MB
 };
 
 const jarradFileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+
   if (file.fieldname === "pdf") {
-    if (allowedFileTypes.pdf.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Invalid file type. Only PDF files are allowed."), false);
-    }
-  } else if (file.fieldname === "picture") {
-    if (allowedFileTypes.image.includes(file.mimetype)) {
+    if (
+      allowedFileTypes.pdf.includes(file.mimetype) &&
+      allowedExtensions.pdf.includes(ext)
+    ) {
       cb(null, true);
     } else {
       cb(
         new Error(
-          `Invalid file type. Only JPEG, PNG, and GIF images are allowed. Received: ${file.mimetype}`
+          `Invalid file type or extension for PDF. Received MIME type: ${file.mimetype}, Extension: ${ext}`
+        ),
+        false
+      );
+    }
+  } else if (file.fieldname === "picture") {
+    if (
+      allowedFileTypes.image.includes(file.mimetype) &&
+      allowedExtensions.image.includes(ext)
+    ) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Invalid image format. Allowed formats: JPEG, JPG, PNG, GIF, BMP, WebP, HEIC. Received MIME type: ${file.mimetype}, Extension: ${ext}`
         ),
         false
       );

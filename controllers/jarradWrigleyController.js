@@ -50,6 +50,7 @@ const saveClient = async (req, res, next) => {
 };
 
 const saveConfirmation = async (req, res, next) => {
+  console.log(req.body);
   const { signedContract, firstReceipt } = req.body;
   try {
     if (!signedContract | !firstReceipt) {

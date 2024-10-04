@@ -50,10 +50,9 @@ const saveClient = async (req, res, next) => {
 };
 
 const saveConfirmation = async (req, res, next) => {
-  console.log(req.body);
-  const { signedContract, firstReceipt } = req.body;
+  const { pdf, picture } = req.body;
   try {
-    if (!signedContract | !firstReceipt) {
+    if (!pdf | !picture) {
       throw new CustomError(400, "Please provide all required fields", 400);
     }
 
@@ -61,7 +60,7 @@ const saveConfirmation = async (req, res, next) => {
 
     await newConfirmation.save();
 
-    res.status(201);
+    res.status(201).json(newConfirmation);
   } catch (error) {
     if (error instanceof CustomError) {
       next(error);

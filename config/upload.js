@@ -110,7 +110,7 @@ const jarradFileFilter = (req, file, cb) => {
     } else {
       cb(
         new Error(
-          "Invalid file type. Only JPEG, PNG, and GIF images are allowed."
+          `Invalid file type. Only JPEG, PNG, and GIF images are allowed. Received: ${file.mimetype}`
         ),
         false
       );
@@ -119,6 +119,7 @@ const jarradFileFilter = (req, file, cb) => {
     cb(new Error("Unexpected field name"), false);
   }
 };
+
 const jarradUpload = multer({
   storage: storage,
   fileFilter: jarradFileFilter,
@@ -126,6 +127,7 @@ const jarradUpload = multer({
     fileSize: Math.max(fileSizeLimits.pdf, fileSizeLimits.image),
   },
 });
+
 const uploadToCloudinary = async (file) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(

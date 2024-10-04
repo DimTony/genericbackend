@@ -86,53 +86,46 @@ const upload = multer({
   },
 });
 
+const allowedFileTypes = {
+  pdf: ["application/pdf"],
+  image: ["image/jpeg", "image/png", "image/gif"],
+};
+
+// Define file size limits (in bytes)
+const fileSizeLimits = {
+  pdf: 5 * 1024 * 1024, // 5 MB
+  image: 2 * 1024 * 1024, // 2 MB
+};
+
 const jarradFileFilter = (req, file, cb) => {
-  // For PDF uploads
   if (file.fieldname === "pdf") {
-    if (file.mimetype === "application/pdf") {
+    if (allowedFileTypes.pdf.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Invalid PDF format. Only PDF files are allowed."), false);
+      cb(new Error("Invalid file type. Only PDF files are allowed."), false);
     }
-  }
-  // For image uploads
-  else if (file.fieldname === "picture") {
-    console.log(file.mimetype);
-    if (
-      [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/gif",
-        "image/bmp",
-        "image/webp",
-        "image/heic",
-      ].includes(file.mimetype)
-    ) {
+  } else if (file.fieldname === "picture") {
+    if (allowedFileTypes.image.includes(file.mimetype)) {
       cb(null, true);
     } else {
       cb(
         new Error(
-          "Invalid image format. Allowed formats: JPEG, PNG, GIF, BMP, WebP, HEIC"
+          "Invalid file type. Only JPEG, PNG, and GIF images are allowed."
         ),
         false
       );
     }
-  }
-  // Handle unexpected fields
-  else {
-    cb(new Error("Unexpected field"), false);
+  } else {
+    cb(new Error("Unexpected field name"), false);
   }
 };
-
 const jarradUpload = multer({
-  storage: storage, // Adjust for Cloudinary if needed
+  storage: storage,
   fileFilter: jarradFileFilter,
   limits: {
-    fileSize: 2 * 1024 * 1024 * 1024, // 2 GB limit (use this limit for large files)
+    fileSize: Math.max(fileSizeLimits.pdf, fileSizeLimits.image),
   },
 });
-
 const uploadToCloudinary = async (file) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(

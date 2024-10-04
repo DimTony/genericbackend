@@ -97,6 +97,7 @@ const jarradFileFilter = (req, file, cb) => {
   }
   // For image uploads
   else if (file.fieldname === "picture") {
+    console.log(file.mimetype);
     if (
       [
         "image/jpeg",

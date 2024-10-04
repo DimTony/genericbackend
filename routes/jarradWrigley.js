@@ -9,11 +9,11 @@ const {
 router.post("/save", saveClient);
 router.post(
   "/confirmation/save",
-  // upload.fields([
-  //   { name: "pdf", maxCount: 1 },
-  //   { name: "pic", maxCount: 1 }
-  // ]),
-  // handleUpload,
+  upload.fields([
+    { name: "pdf", maxCount: 1 },
+    { name: "picture", maxCount: 1 },
+  ]),
+  handleUpload,
   saveConfirmation
 );
 

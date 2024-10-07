@@ -1,10 +1,10 @@
-const dotenv = require('dotenv');
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+const dotenv = require("dotenv");
+const cloudinary = require("cloudinary").v2;
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 
 dotenv.config();
 
@@ -21,60 +21,60 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(
       null,
-      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
     );
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.fieldname === 'introVideo') {
+  if (file.fieldname === "introVideo") {
     if (
       [
-        'video/mp4',
-        'video/quicktime',
-        'video/x-msvideo',
-        'video/x-ms-wmv',
-        'video/x-flv',
-        'video/webm',
-        'video/x-matroska',
-        'video/hevc',
+        "video/mp4",
+        "video/quicktime",
+        "video/x-msvideo",
+        "video/x-ms-wmv",
+        "video/x-flv",
+        "video/webm",
+        "video/x-matroska",
+        "video/hevc",
       ].includes(file.mimetype)
     ) {
       cb(null, true);
     } else {
       cb(
         new Error(
-          'Invalid video format. Allowed formats: MP4, MOV, AVI, WMV, FLV, WebM, MKV, HEVC'
+          "Invalid video format. Allowed formats: MP4, MOV, AVI, WMV, FLV, WebM, MKV, HEVC"
         ),
         false
       );
     }
   } else if (
-    file.fieldname === 'fullBodyPhoto' ||
-    file.fieldname === 'headShotPhoto' ||
-    file.fieldname === 'receiptPhoto'
+    file.fieldname === "fullBodyPhoto" ||
+    file.fieldname === "headShotPhoto" ||
+    file.fieldname === "receiptPhoto"
   ) {
     if (
       [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/bmp',
-        'image/webp',
-        'image/heic',
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "image/webp",
+        "image/heic",
       ].includes(file.mimetype)
     ) {
       cb(null, true);
     } else {
       cb(
         new Error(
-          'Invalid image format. Allowed formats: JPEG, PNG, GIF, BMP, WebP, HEIC'
+          "Invalid image format. Allowed formats: JPEG, PNG, GIF, BMP, WebP, HEIC"
         ),
         false
       );
     }
   } else {
-    cb(new Error('Unexpected field'), false);
+    cb(new Error("Unexpected field"), false);
   }
 };
 
@@ -86,12 +86,80 @@ const upload = multer({
   },
 });
 
+const allowedFileTypes = {
+  pdf: ["application/pdf"],
+  image: [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "image/webp",
+    "image/heic",
+  ],
+};
+
+const allowedExtensions = {
+  pdf: [".pdf"],
+  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".heic"],
+};
+
+// Define file size limits (in bytes)
+const fileSizeLimits = {
+  pdf: 500 * 1024 * 1024, // 500 MB
+  image: 200 * 1024 * 1024, // 200 MB
+};
+
+const jarradFileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (file.fieldname === "pdf") {
+    if (
+      allowedFileTypes.pdf.includes(file.mimetype) &&
+      allowedExtensions.pdf.includes(ext)
+    ) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Invalid file type or extension for PDF. Received MIME type: ${file.mimetype}, Extension: ${ext}`
+        ),
+        false
+      );
+    }
+  } else if (file.fieldname === "picture") {
+    if (
+      allowedFileTypes.image.includes(file.mimetype) &&
+      allowedExtensions.image.includes(ext)
+    ) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Invalid image format. Allowed formats: JPEG, JPG, PNG, GIF, BMP, WebP, HEIC. Received MIME type: ${file.mimetype}, Extension: ${ext}`
+        ),
+        false
+      );
+    }
+  } else {
+    cb(new Error("Unexpected field name"), false);
+  }
+};
+
+const jarradUpload = multer({
+  storage: storage,
+  fileFilter: jarradFileFilter,
+  limits: {
+    fileSize: Math.max(fileSizeLimits.pdf, fileSizeLimits.image),
+  },
+});
+
 const uploadToCloudinary = async (file) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: 'farmer_wants_a_wife_applications',
-        resource_type: 'auto',
+        folder: "farmer_wants_a_wife_applications",
+        resource_type: "auto",
       },
       (error, result) => {
         if (error) reject(error);
@@ -131,5 +199,6 @@ const handleUpload = async (req, res, next) => {
 
 module.exports = {
   upload,
+  jarradUpload,
   handleUpload,
 };

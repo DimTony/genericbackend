@@ -82,9 +82,59 @@ const getTracking = async (req, res, next) => {
   }
 };
 
+const getTrackingByReference = async (req, res, next) => {
+  try {
+    const { id, country } = req.params;
+
+    const trackingDocument = await Tracking.findOne({
+      _id: id,
+      to: country,
+    });
+
+    if (!trackingDocument) {
+      throw new CustomError(404, "Tracking document not found");
+    }
+
+    res.status(200).json(trackingDocument);
+  } catch (error) {
+    console.error(error);
+    if (error instanceof CustomError) {
+      next(error);
+    } else {
+      next(new CustomError(500, "Server Error"));
+    }
+  }
+};
+
+const getTrackingByTCN = async (req, res, next) => {
+  try {
+    const { id, date } = req.params;
+
+    const trackingDocument = await Tracking.findOne({
+      _id: id,
+      shipDate: date,
+    });
+
+    if (!trackingDocument) {
+      throw new CustomError(404, "Tracking document not found");
+    }
+
+    res.status(200).json(trackingDocument);
+  } catch (error) {
+    console.error(error);
+    if (error instanceof CustomError) {
+      next(error);
+    } else {
+      next(new CustomError(500, "Server Error"));
+    }
+  }
+};
+
 module.exports = {
   createTracking,
   updateTracking,
   deleteTracking,
   getTracking,
+  getTrackingByReference,
+  getTrackingByTCN,
 };

@@ -16,6 +16,7 @@ const jarradWrigleyRoutes = require("./routes/jarradWrigley");
 const lazadaRoutes = require("./routes/lazada");
 const mailingListRoutes = require("./routes/mailingList");
 const researchRoutes = require("./routes/research");
+const trackingRoutes = require("./routes/tracking");
 const volunteerRoutes = require("./routes/volunteer");
 
 dotenv.config();
@@ -49,6 +50,7 @@ app.use("/api/jarrad-wrigley", jarradWrigleyRoutes);
 app.use("/api/lazada", lazadaRoutes);
 app.use("/api/mailing", mailingListRoutes);
 app.use("/api/researches", researchRoutes);
+app.use("/api/tracking", trackingRoutes);
 app.use("/api/volunteers", volunteerRoutes);
 
 // Keep alive endpoint

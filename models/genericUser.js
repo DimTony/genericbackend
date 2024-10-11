@@ -20,6 +20,21 @@ const GenericUserSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+    currentAmount: {
+      type: Number,
+    },
+    totalAmount: {
+      type: Number,
+    },
+    generalAdmission: {
+      type: Number,
+    },
+    fanZone: {
+      type: Number,
+    },
+    meetAndGreet: {
+      type: Number,
+    },
   },
   { versionKey: false, timestamps: true }
 );

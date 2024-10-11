@@ -2,7 +2,19 @@ const GenericUser = require("../models/genericUser");
 const CustomError = require("../utils/customError");
 
 const saveUser = async (req, res, next) => {
-  const { username, firstName, lastName, address, email, password } = req.body;
+  const {
+    username,
+    firstName,
+    lastName,
+    address,
+    email,
+    password,
+    currentAmount,
+    totalAmount,
+    generalAdmission,
+    fanZone,
+    meetAndGreet,
+  } = req.body;
 
   try {
     const genericUser = new GenericUser({
@@ -12,11 +24,23 @@ const saveUser = async (req, res, next) => {
       address,
       email,
       password,
+      currentAmount,
+      totalAmount,
+      generalAdmission,
+      fanZone,
+      meetAndGreet,
     });
 
     await genericUser.save();
 
-    res.status(201).json({ user: genericUser });
+    res.status(201).json({
+      user: genericUser,
+      prices: {
+        generalAdmission: genericUser.generalAdmission,
+        fanZone: genericUser.fanZone,
+        meetAndGreet: genericUser.meetAndGreet,
+      },
+    });
   } catch (error) {
     if (error instanceof CustomError) {
       next(error);

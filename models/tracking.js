@@ -1,5 +1,51 @@
 const mongoose = require("mongoose");
 
+const ShipmentDataSchema = new mongoose.Schema({
+  trackingNumber: {
+    type: String,
+  },
+  deliveredTo: {
+    type: String,
+  },
+  shipDate: {
+    type: Date,
+  },
+  standardTransit: {
+    type: String,
+  },
+
+  delivered: {
+    type: String,
+  },
+});
+
+const ServiceDataSchema = new mongoose.Schema({
+  service: {
+    type: String,
+  },
+  specialHandlingSection: {
+    type: String,
+  },
+});
+
+const PackageDetailsSchema = new mongoose.Schema({
+  weight: {
+    type: String,
+  },
+  dimensions: {
+    type: String,
+  },
+  totalPieces: {
+    type: Number,
+  },
+  totalShipmentWeight: {
+    type: String,
+  },
+  packaging: {
+    type: String,
+  },
+});
+
 const TrackingEntrySchema = new mongoose.Schema({
   date: {
     type: String,
@@ -54,6 +100,9 @@ const TrackingSchema = new mongoose.Schema(
       type: String,
     },
     trackingData: [TrackingEntrySchema],
+    shipmentData: ShipmentDataSchema,
+    serviceData: ServiceDataSchema,
+    packageData: PackageDetailsSchema,
   },
   { versionKey: false, timestamps: true }
 );

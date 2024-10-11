@@ -86,12 +86,16 @@ const getTrackingByReference = async (req, res, next) => {
   try {
     const { id, country } = req.params;
 
-    const trackingDocument = await Tracking.findOne({
-      _id: id,
-      to: country,
-    });
+    const trackingDocument = await Tracking.findById(id);
 
     if (!trackingDocument) {
+      throw new CustomError(404, "Tracking document not found");
+    }
+
+    const toAddress = trackingDocument.to;
+    const toCountry = toAddress.split(",").pop().trim(); // Extract last part after the comma
+
+    if (toCountry.toLowerCase() !== country.toLowerCase()) {
       throw new CustomError(404, "Tracking document not found");
     }
 

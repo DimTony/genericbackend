@@ -66,6 +66,9 @@ const TrackingEntrySchema = new mongoose.Schema({
 
 const TrackingSchema = new mongoose.Schema(
   {
+    currentStep: {
+      type: Number,
+    },
     shipDate: {
       type: String,
     },
@@ -88,6 +91,9 @@ const TrackingSchema = new mongoose.Schema(
       type: String,
     },
     receiverEmail: {
+      type: String,
+    },
+    receiverPhoneNumber: {
       type: String,
     },
     currentLocation: {

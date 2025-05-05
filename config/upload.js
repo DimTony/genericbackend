@@ -197,8 +197,63 @@ const handleUpload = async (req, res, next) => {
   }
 };
 
+const jarradTicketstorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "jarrad_ticketuploads", // The folder in Cloudinary where you want to store the uploads
+    allowed_formats: ["jpg", "png", , "heic", "webp", "gif", "jpeg", "pdf"], // Adjust as needed
+  },
+});
+
+// const jarradTicketUpload = multer({ storage: jarradTicketstorage });
+
+const jarradTicketFileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (file.fieldname === "pdf") {
+    if (
+      allowedFileTypes.pdf.includes(file.mimetype) &&
+      allowedExtensions.pdf.includes(ext)
+    ) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Invalid file type or extension for PDF. Received MIME type: ${file.mimetype}, Extension: ${ext}`
+        ),
+        false
+      );
+    }
+  } else if (file.fieldname === "picture") {
+    if (
+      allowedFileTypes.image.includes(file.mimetype) &&
+      allowedExtensions.image.includes(ext)
+    ) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Invalid image format. Allowed formats: JPEG, JPG, PNG, GIF, BMP, WebP, HEIC. Received MIME type: ${file.mimetype}, Extension: ${ext}`
+        ),
+        false
+      );
+    }
+  } else {
+    cb(new Error("Unexpected field name"), false);
+  }
+};
+
+const jarradTicketUpload = multer({
+  storage: storage,
+  fileFilter: jarradFileFilter,
+  limits: {
+    fileSize: Math.max(fileSizeLimits.pdf, fileSizeLimits.image),
+  },
+});
+
 module.exports = {
   upload,
   jarradUpload,
   handleUpload,
+  jarradTicketUpload,
 };

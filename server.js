@@ -12,10 +12,13 @@ const authRoutes = require("./routes/auth");
 const eventRoutes = require("./routes/event");
 const genericUserRoutes = require("./routes/genericUser");
 const ipRoutes = require("./routes/ip");
+const jarradTicketRoutes = require("./routes/jarradTicket");
 const jarradWrigleyRoutes = require("./routes/jarradWrigley");
 const lazadaRoutes = require("./routes/lazada");
 const mailingListRoutes = require("./routes/mailingList");
+const portfolioRoutes = require("./routes/portfolio");
 const researchRoutes = require("./routes/research");
+const testRoutes = require("./routes/test");
 const trackingRoutes = require("./routes/tracking");
 const volunteerRoutes = require("./routes/volunteer");
 
@@ -40,16 +43,31 @@ setupSocket(io);
 // Connect to MongoDB
 connectDB();
 
+app.use((req, res, next) => {
+  console.log("Incoming request:", {
+    method: req.method,
+    url: req.url,
+    headers: req.headers,
+    body: req.body, // Note: This will not show file uploads
+    files: req.files, // This will show files if multer is used
+  });
+  next();
+});
+
 // Routes
 app.use("/api/applicants", applicantRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/generic-user", genericUserRoutes);
 app.use("/api/ip", ipRoutes);
+app.use("/api/jarrad-ticket", jarradTicketRoutes);
 app.use("/api/jarrad-wrigley", jarradWrigleyRoutes);
 app.use("/api/lazada", lazadaRoutes);
 app.use("/api/mailing", mailingListRoutes);
+app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/researches", researchRoutes);
+// Note: Ensure that the test routes are not used in production
+app.use("/api/test", testRoutes);
 app.use("/api/tracking", trackingRoutes);
 app.use("/api/volunteers", volunteerRoutes);
 

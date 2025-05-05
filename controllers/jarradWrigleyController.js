@@ -32,7 +32,7 @@ const saveClient = async (req, res, next) => {
       !venueAddress |
       !venueName
     ) {
-      throw new CustomError(400, "Please provide all required fields", 400);
+      throw new CustomError(400, "Please provide all required fields");
     }
 
     const newClient = new JarradWrigleyClient(req.body);
